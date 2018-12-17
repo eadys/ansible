@@ -1,0 +1,54 @@
+---
+
+- hosts: all
+  tasks:
+
+  - set_fact:
+      health: health.html
+    when:
+      > "'api' in inventory_hostname"
+      > "'green' not in inventory_hostname"
+
+  - set_fact:
+      greenhealth: greenhealth.html
+    when:
+      > "'api' in inventory_hostname"
+      > "'green' in inventory_hostname"
+
+  - name: Remove the health file for the green cluster
+    file:
+      path: /var/www/html/{{ greenhealth }}
+      state: absent
+
+
+  - name: wait 30 seconds for loadbalancer to pick up changes
+    pause:
+      seconds: 30
+
+- hosts: tomcat
+  tasks:
+
+  - name: restart green tomcat cluster
+      service: tomcat
+      state: restarted
+    when: "'green' in inventory_hostname"
+
+
+  - name: wait for web applications to start (needs to be minimum 4 minutes due to web pool starting slow)
+    pause:
+      minutes: 5
+
+- hosts: apache
+  tasks:
+
+  - name: copy health file to enable pool on loadbalancer
+    command: "sudo -n /usr/bin/cp /root/{{ healthcheck}} /var/www/html/"
+    when: ansible_distribution == 'CentOS'
+
+  - name: copy health file to enable pool on loadbalancer
+    command: "sudo -n /bin/cp /root/{{ healthcheck}} /var/www/html/"
+    when: ansible_distribution == 'Debian'
+
+  - name: wait 30 seconds for loadbalancer to pick up changes
+    pause:
+      seconds: 30

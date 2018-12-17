@@ -1,0 +1,18 @@
+---
+
+- hosts: all
+  tasks:
+
+    ansible -i production/inventory web-{{item}}-apache -m file -a "path=/var/www/html/greenhealth.html state=absent" --user=localadmin
+
+    ansible-playbook playbooks/tomcat/tomcat-target.yml -i production/inventory -l web-{{item}}-tomcat --user=localadmin
+
+    ansible -i production/inventory web-{{green}}-tomcat -m shell -a "systemctl status tomcat" --user=localadmin
+
+    tail multiple  tail -f /var/log/tomcat/catalina.out
+
+    ansible -i production/inventory web-green-tomcat -m shell -a "swapoff -a" --user=localadmin
+
+    ansible -i production/inventory web-green-tomcat -m shell -a "swapon -a" --user=localadmin
+
+    ansible -i production/inventory web-green-apache -m copy -a "src=/root/greenhealth.html dest=/var/www/html/greenhealth.html remote_src=yes" --user=localadmin

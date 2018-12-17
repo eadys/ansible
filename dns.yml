@@ -1,0 +1,16 @@
+---
+
+- hosts: all
+  gather_facts: false
+  tasks:
+
+    - name: clone repo
+      git:
+        repo: 'https://git.cloud.oddschecker.com/platform/bind.git'
+        dest: /etc/bind
+        clone: yes
+        update: yes
+
+    - name: Start service
+      service: bind9
+      state: restarted

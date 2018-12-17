@@ -1,0 +1,26 @@
+---
+
+- hosts: all
+  gather_facts: False
+  tasks:
+    - name: Upgrade all packages to the latest version
+      apt:
+        name: "{{ item }}"
+        state: latest
+        only_upgrade: yes
+        #update_cache: yes
+      ignore_errors: true
+      with_items:
+        # #- libxml-libxml-perl
+        # - procmail
+        # # - google-cloud-sdk
+        - libxml2
+        # #- percona-toolkit
+        # - python2.6
+        # - python2.6-minimal
+        # - python2.7
+        # - python2.7-minimal
+        - curl
+        - libcurl3
+        - libcurl3-gnutls
+        - telegraf

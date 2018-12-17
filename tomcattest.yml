@@ -1,0 +1,15 @@
+---
+
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+
+
+    - include_vars: /Users/sea01/Documents/repos/sysadmin/ansible/roles/ansible-role-tomcat/defaults/main.yml
+    - include_vars: /Users/sea01/Documents/repos/sysadmin/ansible/dev/group_vars/dev-tomcat.yml
+#    - include_vars: /Users/sea01/Documents/repos/sysadmin/ansible/production/group_vars/api-tomcat.yml
+
+    - name: Copy Tomcat configuration files from templates
+      template: src='/Users/sea01/Documents/repos/sysadmin/ansible/roles/ansible-role-tomcat/templates/server.xml.8.j2' dest=/Users/sea01/Documents/repos/sysadmin/ansible/tmp.xml
+      delegate_to: localhost
