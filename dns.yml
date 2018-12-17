@@ -6,7 +6,7 @@
 
     - name: clone repo
       git:
-        repo: 'https://git.cloud.oddschecker.com/platform/bind.git'
+        repo: 'https://git.cloud.com/platform/bind.git'
         dest: /etc/bind
         clone: yes
         update: yes
